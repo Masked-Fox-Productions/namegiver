@@ -1,7 +1,7 @@
 import pytest
 import os
 from unittest.mock import patch, MagicMock
-from src.namegiver import (
+from namegiver.namegiver import (
     TokenTracker,
     is_too_similar,
     generate_unique_name,

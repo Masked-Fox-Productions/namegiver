@@ -1,10 +1,4 @@
-import sys
-import os
-
-# Add the project root directory to Python path
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-
-from src.namegiver import generate_unique_name, get_token_usage
+from namegiver import generate_unique_name, get_token_usage
 
 def generate_party_names(party_members, past_names=None):
     """

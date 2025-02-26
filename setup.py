@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="namegiver",
-    version="0.1.0",
+    version="0.1.2",
     packages=find_packages(where="src"),
     package_dir={"": "src"},
     install_requires=[
@@ -10,12 +10,12 @@ setup(
         "python-dotenv",
         "python-Levenshtein",
     ],
-    author="Your Name",
-    author_email="your.email@example.com",
+    author="Aaron Pogue",
+    author_email="aaron.pogue@maskedfox.com",
     description="AI-based Character Name Generator",
     long_description=open("README.md").read(),
     long_description_content_type="text/markdown",
-    url="https://github.com/yourusername/namegiver",
+    url="https://github.com/masked-fox-productions/namegiver",
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: MIT License",
@@ -24,7 +24,7 @@ setup(
     python_requires=">=3.6",
     entry_points={
         "console_scripts": [
-            "namegen=src.namegiver:main",
+            "namegen=namegiver.namegiver:main",
         ],
     },
 )
