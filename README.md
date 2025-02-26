@@ -3,11 +3,11 @@
 A lightweight, OpenAI-powered Python library for generating **unique fictional character names** based on user-provided prompts. Designed for writers, game developers, and world-builders.
 
 ## Features
-✅ **AI-Generated Names** – Distinctive names based on user descriptions.  
-✅ **Ensures Name Distinctiveness** – Avoids generating names too similar to previous ones.  
-✅ **Supports CLI & API** – Use from the terminal or integrate into Python projects.  
-✅ **Economy Mode** – Uses GPT-3.5 by default; switch to GPT-4 if needed.  
-✅ **Token Usage Tracking** – Monitor OpenAI API token consumption.  
+**AI-Generated Names** – Distinctive names based on user descriptions.  
+**Ensures Name Distinctiveness** – Avoids generating names too similar to previous ones.  
+**Supports CLI & API** – Use from the terminal or integrate into Python projects.  
+**Economy Mode** – Uses GPT-3.5 by default; switch to GPT-4 if needed.  
+**Token Usage Tracking** – Monitor OpenAI API token consumption.  
 
 ## Installation
 
