@@ -9,6 +9,9 @@ load_dotenv()
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 ECONOMY_MODE = os.getenv("ECONOMY_MODE", "True").lower() == "true"
 
+# Initialize OpenAI client
+client = openai.OpenAI(api_key=OPENAI_API_KEY)
+
 # OpenAI Model selection
 MODEL = "gpt-3.5-turbo" if ECONOMY_MODE else "gpt-4"
 
@@ -22,6 +25,10 @@ class TokenTracker:
 
     def report(self):
         return {"total_tokens_used": self.total_tokens}
+        
+    def reset(self):
+        """Reset the token counter back to 0."""
+        self.total_tokens = 0
 
 # Global tracker instance
 token_tracker = TokenTracker()
@@ -53,7 +60,9 @@ def generate_unique_name(prompt: str, past_names=None, max_tokens=10, max_attemp
     Returns:
         str: The generated name.
     """
-    if not OPENAI_API_KEY:
+    global token_tracker  # Declare global at the start of function
+    
+    if not os.getenv("OPENAI_API_KEY"):  # Check environment directly
         raise ValueError("Missing OpenAI API key. Set OPENAI_API_KEY as an environment variable.")
 
     past_names = past_names or []  # Default to empty list if None
@@ -66,14 +75,19 @@ def generate_unique_name(prompt: str, past_names=None, max_tokens=10, max_attemp
         """
 
         try:
-            response = openai.ChatCompletion.create(
+            response = client.chat.completions.create(
                 model=MODEL,
                 messages=[{"role": "user", "content": full_prompt}],
                 max_tokens=max_tokens
             )
 
-            generated_name = response["choices"][0]["message"]["content"].strip()
-            token_tracker.add_usage(response["usage"]["total_tokens"])
+            if not response.choices:
+                raise ValueError("Invalid API response")
+
+            generated_name = response.choices[0].message.content.strip()
+            
+            if hasattr(response, 'usage') and hasattr(response.usage, 'total_tokens'):
+                token_tracker.add_usage(response.usage.total_tokens)
 
             if not is_too_similar(generated_name, past_names):
                 return generated_name
