@@ -6,8 +6,7 @@ from namegiver.namegiver import (
     is_too_similar,
     generate_unique_name,
     get_token_usage,
-    token_tracker,
-    client
+    token_tracker
 )
 
 # Reset token tracker and environment before each test
@@ -57,29 +56,27 @@ def test_token_tracker_report():
 def test_is_too_similar(new_name, past_names, threshold, expected):
     assert is_too_similar(new_name, past_names, threshold) == expected
 
-# Test name generation
-@patch('openai.OpenAI')
-def test_generate_unique_name_success(mock_openai):
+# Test name generation - patch at the module level
+@patch('namegiver.namegiver.client.chat.completions.create')
+def test_generate_unique_name_success(mock_completions_create):
     os.environ['OPENAI_API_KEY'] = 'test-key'
     
-    # Create mock response object
+    # Create mock response
     mock_response = MagicMock()
     mock_response.choices = [MagicMock()]
     mock_response.choices[0].message.content = "Zephyr"
     mock_response.usage.total_tokens = 50
     
-    # Set up mock client
-    mock_client = MagicMock()
-    mock_client.chat.completions.create.return_value = mock_response
-    mock_openai.return_value = mock_client
+    # Set up mock function return
+    mock_completions_create.return_value = mock_response
     
     result = generate_unique_name("fantasy wizard", past_names=["Merlin", "Gandalf"])
-    mock_client.chat.completions.create.assert_called_once()
+    mock_completions_create.assert_called_once()
     assert result == "Zephyr"
     assert token_tracker.total_tokens == 50
 
-@patch('openai.OpenAI')
-def test_generate_unique_name_similar_names(mock_openai):
+@patch('namegiver.namegiver.client.chat.completions.create')
+def test_generate_unique_name_similar_names(mock_completions_create):
     os.environ['OPENAI_API_KEY'] = 'test-key'
     
     # Create mock responses
@@ -93,18 +90,16 @@ def test_generate_unique_name_similar_names(mock_openai):
     mock_response2.choices[0].message.content = "Zephyr"
     mock_response2.usage.total_tokens = 10
     
-    # Set up mock client
-    mock_client = MagicMock()
-    mock_client.chat.completions.create.side_effect = [mock_response1, mock_response2]
-    mock_openai.return_value = mock_client
+    # Set up mock function returns for consecutive calls
+    mock_completions_create.side_effect = [mock_response1, mock_response2]
     
     result = generate_unique_name("fantasy wizard", past_names=["John"])
     assert result == "Zephyr"
-    assert mock_client.chat.completions.create.call_count == 2
+    assert mock_completions_create.call_count == 2
     assert token_tracker.total_tokens == 20
 
-@patch('openai.OpenAI')
-def test_generate_unique_name_max_attempts(mock_openai):
+@patch('namegiver.namegiver.client.chat.completions.create')
+def test_generate_unique_name_max_attempts(mock_completions_create):
     os.environ['OPENAI_API_KEY'] = 'test-key'
     
     # Create mock response
@@ -113,18 +108,16 @@ def test_generate_unique_name_max_attempts(mock_openai):
     mock_response.choices[0].message.content = "John"
     mock_response.usage.total_tokens = 10
     
-    # Set up mock client
-    mock_client = MagicMock()
-    mock_client.chat.completions.create.return_value = mock_response
-    mock_openai.return_value = mock_client
+    # Set up mock function return
+    mock_completions_create.return_value = mock_response
     
     result = generate_unique_name("fantasy wizard", past_names=["John"], max_attempts=3)
     assert result is None
-    assert mock_client.chat.completions.create.call_count == 3
+    assert mock_completions_create.call_count == 3
     assert token_tracker.total_tokens == 30
 
-@patch('openai.OpenAI')
-def test_get_token_usage(mock_openai):
+@patch('namegiver.namegiver.client.chat.completions.create')
+def test_get_token_usage(mock_completions_create):
     os.environ['OPENAI_API_KEY'] = 'test-key'
     
     # Create mock response
@@ -133,10 +126,8 @@ def test_get_token_usage(mock_openai):
     mock_response.choices[0].message.content = "Zephyr"
     mock_response.usage.total_tokens = 75
     
-    # Set up mock client
-    mock_client = MagicMock()
-    mock_client.chat.completions.create.return_value = mock_response
-    mock_openai.return_value = mock_client
+    # Set up mock function return
+    mock_completions_create.return_value = mock_response
     
     result = generate_unique_name("fantasy wizard", past_names=["Merlin"])
     assert result == "Zephyr"
