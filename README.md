@@ -13,11 +13,13 @@ A lightweight, OpenAI-powered Python library for generating **unique fictional c
 
 ### 1. Install via pip
 ```bash
-pip install openai python-dotenv python-Levenshtein
+pip install namegiver
 ```
 
+This will install the package and all its dependencies.
+
 ### 2. Set Up API Key
-Create a `.env` file in the project directory:
+Create a `.env` file in your project directory:
 
 ```ini
 OPENAI_API_KEY=your-api-key-here
@@ -35,7 +37,7 @@ export ECONOMY_MODE="True"
 
 ### 1. Using the Python API
 ```python
-from name_generator import generate_unique_name, get_token_usage
+from namegiver import generate_unique_name, get_token_usage
 
 past_names = ["Elwin", "Alvin", "Elvin"]
 
@@ -109,13 +111,13 @@ Token Usage Report: {'total_tokens_used': 50}
 Clone the repo and install dependencies:
 
 ```bash
-git clone https://github.com/yourusername/character-name-generator.git
-cd character-name-generator
+git clone https://github.com/yourusername/namegiver.git
+cd namegiver
 pip install -e .
 ```
 
 ### Run Tests
-(TBD: Add test cases)
+Run the test suite with:
 
 ```bash
 pytest tests/
