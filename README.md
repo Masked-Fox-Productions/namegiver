@@ -126,5 +126,34 @@ pytest tests/
 ## Contributing
 Contributions are welcome! Submit issues or pull requests.
 
+## Roadmap
+
+The following features are planned for future releases:
+
+### Enhanced Name Generation
+- **Multiple Categories** – Generate names for Characters, Locations, Battles, Artifacts, Monsters, and more
+- **Category-Specific Prompting** – Tailored generation strategies for each name category
+- **Batch Generation** – Create multiple names at once with consistent theming
+
+### Project Management
+- **Project Files** – Save and load collections of names as JSON project files
+- **Categorized Storage** – Organize generated names by type within projects
+- **Name History** – Track all previously generated names within a project
+
+### Rich Content Generation
+- **Descriptions** – Generate detailed descriptions for any named entity
+- **Custom Prompting** – Fine-tune description generation with user-provided context
+- **Context-Aware Generation** – Use existing project data as context for new generations
+
+### User Interfaces
+- **Flask Web Application** – Browse and manage projects through a web interface
+- **Interactive Dashboard** – Visualize name relationships and categories
+- **Export Options** – Save projects in various formats (JSON, CSV, PDF)
+
+### Advanced Features
+- **Name Relationships** – Define connections between generated entities
+- **World Building Tools** – Generate consistent name sets for cohesive fictional worlds
+- **API Improvements** – Enhanced developer tools for integration
+
 ## License
 This project is licensed under the MIT License.
