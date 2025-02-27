@@ -5,11 +5,11 @@ from namegiver.namegiver import (
     TokenTracker,
     is_too_similar,
     generate_unique_name,
-    get_token_usage,
-    token_tracker
+    get_token_usage
 )
 
 # Reset token tracker and environment before each test
+token_tracker = TokenTracker()
 @pytest.fixture(autouse=True)
 def setup_test_env():
     # Reset token tracker
