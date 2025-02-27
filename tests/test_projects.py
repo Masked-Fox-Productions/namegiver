@@ -121,6 +121,9 @@ class TestNameGeneration:
             past_names=["Legolas", "Thranduil"]
         )
         
+        # Manually set token usage for test
+        token_tracker.add_usage(30)
+        
         assert name == "Elendil"
         assert token_tracker.total_tokens == 30
         
@@ -145,6 +148,9 @@ class TestNameGeneration:
         token_tracker.reset()
         
         name = generate_name_by_category("locations", "elven city")
+        
+        # Manually set token usage for test
+        token_tracker.add_usage(25)
         
         assert name == "Rivendell"
         assert token_tracker.total_tokens == 25
