@@ -131,7 +131,7 @@ Contributions are welcome! Submit issues or pull requests.
 The following features are planned for future releases:
 
 ### Enhanced Name Generation
-- **Multiple Categories** – Generate names for Characters, Locations, Battles, Artifacts, Monsters, and more
+- **Multiple Categories** – Generate names for Characters, Locations, Historical Events, Artifacts, Monsters, and more
 - **Category-Specific Prompting** – Tailored generation strategies for each name category
 - **Batch Generation** – Create multiple names at once with consistent theming
 
@@ -154,6 +154,56 @@ The following features are planned for future releases:
 - **Name Relationships** – Define connections between generated entities
 - **World Building Tools** – Generate consistent name sets for cohesive fictional worlds
 - **API Improvements** – Enhanced developer tools for integration
+
+## Context-Aware Name Generation
+
+The context-aware generation feature uses the OpenAI Assistants API to generate names that are consistent with your existing worldbuilding.
+
+### Using the Python API
+
+```python
+from namegiver.projects import load_project, save_project
+
+# Load your project file
+project = load_project("my_world.json")
+
+# Generate a name that considers the project context
+new_name = project.context_aware_generate(
+    category="characters",
+    prompt="a wise old wizard who lives in the northern mountains",
+    should_generate_description=True
+)
+
+# The name is automatically added to your project
+print(f"Generated: {new_name}")
+print(f"Description: {project.get_description('characters', new_name)}")
+
+# Save the updated project
+save_project(project, "my_world.json")
+```
+
+### Using the CLI
+
+```bash
+# Generate a name with project context awareness
+namegen "wise old wizard from the northern mountains" --context-aware --project-file my_world.json --category characters --description
+
+# This will:
+# 1. Load your project file
+# 2. Generate a name consistent with existing worldbuilding
+# 3. Add it to your project
+# 4. Save the updated project
+```
+
+### How It Works
+
+The context-aware generation feature:
+1. Uploads your project file to OpenAI as an assistant file
+2. Creates a specialized assistant with instructions to maintain consistency
+3. Generates names that consider all existing names, descriptions, and relationships
+4. Automatically handles cleanup of temporary resources
+
+This creates a more cohesive naming experience where new generations fit naturally with your existing worldbuilding.
 
 ## License
 This project is licensed under the MIT License.

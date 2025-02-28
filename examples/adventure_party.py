@@ -1,36 +1,43 @@
-from namegiver import generate_unique_name, get_token_usage
+import os
+import sys
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-def generate_party_names(party_members, past_names=None):
+from src.namegiver.namegiver import TokenTracker, token_tracker
+from src.namegiver.projects import (
+    NameProject, 
+    generate_name_by_category,
+    save_project
+)
+
+def create_fantasy_project():
     """
-    Generate unique names for a party of characters based on their roles.
-    
-    Args:
-        party_members (list): List of character role descriptions
-        past_names (list): Optional list of names to avoid
+    Create a fantasy-themed name project with locations and characters.
     
     Returns:
-        dict: Mapping of roles to generated names
+        NameProject: A fantasy project with generated names and descriptions
     """
-    past_names = past_names or []
-    party = {}
+    # Create a new project with a description
+    project = NameProject(
+        "Fantasy Adventure World",
+        "A magical realm of ancient forests, towering mountains, and hidden mysteries."
+    )
     
-    for member in party_members:
-        name = generate_unique_name(member, past_names)
-        if name:
-            party[member] = name
-            past_names.append(name)
+    # Add categories
+    project.add_category("locations")
+    project.add_category("characters")
     
-    return party
-
-def print_party(title, party):
-    """Pretty print the party members and their names."""
-    print(f"\n{title}")
-    print("=" * len(title))
-    for role, name in party.items():
-        print(f"{name:20} - {role}")
-
-def main():
-    # Fantasy Party
+    # Generate a location for our adventure
+    location_prompt = "mystical elven forest kingdom with ancient trees and magical rivers"
+    location_name = generate_name_by_category(
+        "locations", 
+        location_prompt,
+        should_generate_description=True
+    )
+    
+    # Add the location to our project
+    project.add_name("locations", location_name["name"], location_name["description"])
+    
+    # Fantasy party member descriptions
     fantasy_party_members = [
         "noble paladin who upholds justice",
         "mysterious elven ranger from the ancient woods",
@@ -39,13 +46,51 @@ def main():
         "dwarven cleric devoted to the forge god"
     ]
     
-    fantasy_party = generate_party_names(fantasy_party_members)
-    print_party("🗡️  Fantasy Adventure Party", fantasy_party)
+    # Generate names for each party member
+    past_names = []
+    for member_desc in fantasy_party_members:
+        character = generate_name_by_category(
+            "characters", 
+            member_desc,
+            past_names=past_names,
+            should_generate_description=True,
+            description_prompt=f"character from {location_name['name']}"
+        )
+        
+        project.add_name("characters", character["name"], character["description"])
+        past_names.append(character["name"])
     
-    # Keep track of all names to ensure uniqueness across both parties
-    all_names = list(fantasy_party.values())
+    return project
+
+def create_scifi_project():
+    """
+    Create a sci-fi themed name project with locations and characters.
     
-    # Sci-Fi Party
+    Returns:
+        NameProject: A sci-fi project with generated names and descriptions
+    """
+    # Create a new project with a description
+    project = NameProject(
+        "Space Opera Universe",
+        "A vast cosmos of advanced technology, interstellar politics, and untamed frontiers."
+    )
+    
+    # Add categories
+    project.add_category("locations")
+    project.add_category("characters")
+    
+    # Generate a location for our adventure
+    location_prompt = "bustling space station at the edge of known space, filled with traders and mercenaries"
+    location_name = generate_name_by_category(
+        "locations", 
+        location_prompt,
+        should_generate_description=True
+    )
+    
+    # Add the location to our project
+    project.add_name("locations", location_name["name"], location_name["description"])
+    
+    # Sci-Fi party member descriptions
     scifi_party_members = [
         "grizzled space mining captain",
         "cyberpunk hacker prodigy",
@@ -54,13 +99,70 @@ def main():
         "xenobiologist specializing in alien life"
     ]
     
-    scifi_party = generate_party_names(scifi_party_members, all_names)
-    print_party("🚀 Space Opera Crew", scifi_party)
+    # Generate names for each party member
+    past_names = []
+    for member_desc in scifi_party_members:
+        character = generate_name_by_category(
+            "characters", 
+            member_desc,
+            past_names=past_names,
+            should_generate_description=True,
+            description_prompt=f"character from {location_name['name']}"
+        )
+        
+        project.add_name("characters", character["name"], character["description"])
+        past_names.append(character["name"])
+    
+    return project
+
+def print_wiki_entry(name, description):
+    """Print a wiki-style entry for a name and its description."""
+    print(f"\n## {name}")
+    print(f"{description}")
+    print("-" * 70)
+
+def print_project_wiki(project):
+    """Print all names and descriptions in a project as wiki entries."""
+    print(f"\n# {project.name}")
+    print(f"_{project.description}_")
+    print("=" * 70)
+    
+    # Print locations
+    print("\n# LOCATIONS")
+    for location in project.get_names("locations"):
+        print_wiki_entry(location, project.get_description("locations", location))
+    
+    # Print characters
+    print("\n# CHARACTERS")
+    for character in project.get_names("characters"):
+        print_wiki_entry(character, project.get_description("characters", character))
+
+def main():
+    # Reset token counter
+    token_tracker.reset()
+    
+    # Create our fantasy project
+    print("Generating Fantasy Adventure World...")
+    fantasy_project = create_fantasy_project()
+    
+    # Create our sci-fi project
+    print("Generating Space Opera Universe...")
+    scifi_project = create_scifi_project()
+    
+    # Print wiki entries for both projects
+    print_project_wiki(fantasy_project)
+    print_project_wiki(scifi_project)
+    
+    # Save the projects to files
+    save_project(fantasy_project, "fantasy_adventure.json")
+    save_project(scifi_project, "space_opera.json")
+    
+    print(f"\nProjects saved to fantasy_adventure.json and space_opera.json")
     
     # Print token usage report
     print("\n📊 Token Usage Report")
     print("==================")
-    print(get_token_usage())
+    print(f"Total tokens used: {token_tracker.total_tokens}")
 
 if __name__ == "__main__":
     main()
